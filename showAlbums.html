@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ShowAlbum</title>
+    <link
+      rel="stylesheet"
+      href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css"
+      integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="bootstrap-4.6.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+    <div class="loading hide">
+      <div></div>
+    </div>
+    
+    <div class="result d-flex justify-content-between p-3"></div>
+
+    <main></main>
+    <script>
+      const showLoading = function () {
+        document.querySelector(".loading").classList.remove("hide");
+      };
+      const hideLoading = function () {
+        document.querySelector(".loading").classList.add("hide");
+      };
+      const showphoto = function (id) {
+        document.getElementById("showphoto" + id).classList.remove("hide");
+      };
+
+      
+      const Hidephoto = function (id) {
+        document.getElementById("showphoto" + id).classList.add("hide");
+      };
+
+       ShowUseralbums = function () {
+        showLoading();
+        const xhttp = new XMLHttpRequest();
+        xhttp.open("GET", `https://jsonplaceholder.typicode.com/albums`, true);
+
+        xhttp.send();
+        xhttp.onreadystatechange = function () {
+          if (this.readyState === 4 && this.status === 200) {
+            var Userinfo = [];
+            Userinfo = JSON.parse(xhttp.responseText);
+            Userinfo.forEach(function (album) {
+              document.querySelector(
+                ".result"
+              ).innerHTML += `<div  class="row col-lg-4 col-md-6 col-sm-12">
+                  <div class="card col-md-12 p-2 mb-3 ">
+                   <div class="card-body">
+                     <h3 class="card-title" >${album.userId}</h3>
+                      <div class="card-text">ID: ${album.id}</div>
+                            <div class="card-text mb-3">Title: ${album.title}</div>
+                       
+                          <a class="btn btn-secondary  col-md-12 mb-3"  type="button" onclick=" Showalbumphoto (${
+                            album.id
+                          })">Photo</a>
+                          <a class="btn btn-secondary  col-md-12"  type="button"  onclick="Hidephoto(${
+                            album.id
+                          })" >Close</a>
+
+                          <div class="showphoto  " id=${
+                            "showphoto" + album.id
+                          }> </div>
+                        </div>
+                          </div>
+                          </div>
+                          `;
+            });
+            hideLoading();
+          }
+        };
+      };
+      ShowUseralbums();
+      
+      var Showalbumphoto = function (id) {
+        showLoading();
+        const xhttp = new XMLHttpRequest();
+        xhttp.open(
+          "GET",
+          `https://jsonplaceholder.typicode.com/albums/${id}/photos`,
+          true
+        );
+
+        xhttp.send();
+        xhttp.onreadystatechange = function () {
+          if (this.readyState === 4 && this.status === 200) {
+            var Albumphoto = [];
+            Albumphoto = JSON.parse(xhttp.responseText);
+            document.getElementById("showphoto" + id).innerHTML = "";
+            Albumphoto.forEach(function (photo) {
+              document.getElementById(
+                "showphoto" + id
+              ).innerHTML += 
+              `<div  class="row col-lg-12 col-md-12 col-sm-12">
+                  <div class="card col-md-12 p-2 mb-3 ">
+                   <div class="card-body col-md-12">
+                     <h3 class="card-title" >${photo.albumId}</h3>
+                       <div class="card-text ">ID: ${photo.id}</div>
+                            <div class="card-text ">Title: ${photo.title}</div>
+                            <img src="${photo.thumbnailUrl}" 
+                          </div>           
+                          </div>
+                          </div>
+             
+                          `;
+            });
+            hideLoading();
+            document.getElementById("showphoto" + id).style.display = "flex";
+            document.getElementById("showphoto" + id).style.flexWrap = "wrap";
+          }
+          
+        };
+      };
+    </script>
+     <script src="lib/jQuery/jquery-3.6.0.min.js"></script>
+     <script src="lib/popper/popper.min.js"></script>
+     <script src="lib/bootstrap/dist/js/bootstrap.min.js"></script>
+  </body>
+</html>

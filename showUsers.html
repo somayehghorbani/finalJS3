@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ShowUsers</title>
+    <link
+      rel="stylesheet"
+      href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css"
+      integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="bootstrap-4.6.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+    <div class="loading hide">
+      <div></div>
+    </div>
+   <div class=" text-center mt-5 mb-5 p-2">
+      <a href="#" type="button" class="text-decoration-none btn-light btn-lg active shadow-lg p-2 mb-5 bg-white rounded col-md-6 col-sm-12 col-lg-3" onclick="ShowUsersInfo()" role="button" aria-pressed="true">
+    Click for Show All Users
+  </a>
+  <a href="showPosts.html" target="_blank" type="button" class="text-decoration-none btn-light btn-lg active shadow-lg p-2 mb-5 bg-white rounded col-md-6 col-sm-12 col-lg-3"type="button" role="button" aria-pressed="true">
+    Click for Show All Posts
+  </a>
+  <a href="showAlbums.html" target="_blank" type="button" class="text-decoration-none btn-light btn-lg active shadow-lg p-2 mb-5 bg-white rounded col-md-6 col-sm-12 col-lg-3"type="button"
+    role="button" aria-pressed="true">
+    Click for Show All Albums
+  </a></div>
+    <div class="result d-flex "></div>
+
+    <main></main>
+    <script>
+      const showLoading = function () {
+        document.querySelector(".loading").classList.remove("hide");
+      };
+      const hideLoading = function () {
+        document.querySelector(".loading").classList.add("hide");
+      };
+      const Hide = function (id) {
+        document.getElementById("show" + id).classList.add("hide");
+      };
+      const Show = function (id) {
+        document.getElementById("show" + id).classList.remove("hide");
+      };
+      var ShowUsersInfo = function () {
+        showLoading();
+        const xhttp = new XMLHttpRequest();
+        xhttp.open("GET", `https://jsonplaceholder.typicode.com/users`, true);
+
+       
+        xhttp.onreadystatechange = function () {
+          if (this.readyState === 4 && this.status === 200) {
+            var Userinfo = [];
+            Userinfo = JSON.parse(xhttp.responseText);
+            Userinfo.forEach(function (user) {
+              document.querySelector(
+                ".result"
+              ).innerHTML += `<div class="col-lg-4 col-md-6 col-sm-12">
+                  <div class="card p-2 mb-3 ">
+                   <div class="card-body">
+                     <h4 class=" card-title">${user.name}</h4>
+                       <div class="card-text ">uer name: ${user.username}</div>
+                            <div class="card-text mb-3">E-Mail: ${user.email}</div>
+                         
+                        <div>  <a onclick="ShowpostUser(${user.id})" type="button"  class="btn      btn-secondary col-md-12 mb-2" >Posts</a>
+                          <a type="button" onclick=" ShowAlbumsUser(${user.id})"  class="btn btn-secondary col-md-12 mb-2 "  >Albums</a>
+                          <a type="button" onclick="Hide(${user.id})"  class="btn btn-secondary col-md-12 mb-2"  >Close</a>
+                          </div>
+                           <div class="show  p-2" id=${
+                            "show" + user.id
+                          }> </div> 
+                        </div>                       
+                          </div>
+                          </div>
+                          `;
+            });
+            hideLoading();
+          }
+          
+        };
+        xhttp.send();
+      };
+      var ShowpostUser = function (id) {
+        showLoading();
+        const xhttp = new XMLHttpRequest();
+        xhttp.open(
+          "GET",
+          `https://jsonplaceholder.typicode.com/users/${id}/posts`,
+          true
+        );
+
+       
+        xhttp.onreadystatechange = function () {
+          if (this.readyState === 4 && this.status === 200) {
+            var Posts = [];
+            Posts = JSON.parse(xhttp.responseText);
+            document.getElementById("show" + id).innerHTML = "";
+            Posts.forEach(function (post) {
+              document.getElementById("show" + id).innerHTML += `
+                  
+                    UserId :${post.userId}<br>
+                ID : ${post.id}<br>
+                    Title : ${post.title}<br>
+                    Body: ${post.body}<br><br>
+                   <hr>
+                   <div class="mb-3 container-fluid"><a type="button" onclick=" Showpostcomments(${post.id})"  class="btn btn-secondary col-md-7"  >comments</a>
+                   <a type="button" onclick=" Hide(${post.id})"  class="btn btn-secondary col-md-4"  >Close</a></div>
+                   <div class="show  p-2" id=${
+                            "show" + post.id
+                          }> </div>
+                   `;
+
+            });
+            hideLoading();
+            document.getElementById("show" + id).style.display = "flex";
+            document.getElementById("show" + id).style.flexWrap = "wrap";
+          }
+          
+        };
+        xhttp.send();
+      };
+       ShowAlbumsUser = function (id) {
+        showLoading();
+        const xhttp = new XMLHttpRequest();
+        xhttp.open(
+          "GET",
+          `https://jsonplaceholder.typicode.com/albums/${id}/photos`,
+          true
+        );
+
+        xhttp.send();
+        xhttp.onreadystatechange = function () {
+          if (this.readyState === 4 && this.status === 200) {
+            var Photos = [];
+            Photos = JSON.parse(xhttp.responseText);
+            document.getElementById("show" + id).innerHTML = "";
+            Photos.forEach(function (photo) {
+              document.getElementById("show" + id).innerHTML += `
+                  
+              <div class=" ">
+                  <div class="card text-center mb-3 ">
+                   <div class="card-body col-md-12">
+                     <h3 class=" card-title" >${photo.albumId}</h3>
+                       <div class="card-text ">ID: ${photo.id}</div>
+                            <div class="card-text ">Title: ${photo.title}</div>
+                            <img src="${photo.thumbnailUrl}" 
+                          </div>           
+                          </div>`;
+            });
+            hideLoading();
+            document.getElementById("show" + id).style.display = "flex";
+            document.getElementById("show" + id).style.flexWrap = "wrap";
+          }
+        };
+      };
+       Showpostcomments = function (id) {
+        showLoading();
+        const xhttp = new XMLHttpRequest();
+        xhttp.open(
+          "GET",
+          `https://jsonplaceholder.typicode.com/posts/${id}/comments`,
+          true
+        );
+
+        xhttp.send();
+        xhttp.onreadystatechange = function () {
+          if (this.readyState === 4 && this.status === 200) {
+            var PostComments = [];
+            PostComments = JSON.parse(xhttp.responseText);
+            document.getElementById("show" + id).innerHTML = "";
+            PostComments.forEach(function (comment) {
+              document.getElementById("show"+id).innerHTML += `
+                  
+                    UserId :${comment.postId}<br>
+                   name: ${comment.name}<br>
+                    email: ${comment.email}<br>
+                    Body: ${comment.body}<br><br>
+                   <hr>
+                 `;
+            });
+            hideLoading();
+            document.getElementById("show" + id).style.display = "flex";
+            document.getElementById("show" + id).style.flexWrap = "wrap";
+          }
+        };
+      };
+    </script>
+     <script src="lib/jQuery/jquery-3.6.0.min.js"></script>
+     <script src="lib/popper/popper.min.js"></script>
+     <script src="lib/bootstrap/dist/js/bootstrap.min.js"></script>
+  </body>
+</html>

@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ShowPosts</title>
+    <link
+      rel="stylesheet"
+      href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css"
+      integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="bootstrap-4.6.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="style.css">
+     </head>
+  <body>
+    <div class="loading hide">
+      <div></div>
+    </div>
+   
+    <div class="result d-flex justify-content-between p-3"></div>
+
+    <main></main>
+    <script>
+      const showLoading = function () {
+        document.querySelector(".loading").classList.remove("hide");
+      };
+      const hideLoading = function () {
+        document.querySelector(".loading").classList.add("hide");
+      };
+    
+      const Hide = function (id) {
+        document.getElementById("showcomments" + id).classList.add("hide");
+      };
+
+      
+
+      var showUserpost = function () {
+        showLoading();
+        const xhttp = new XMLHttpRequest();
+        xhttp.open(
+          "GET",
+          `https://jsonplaceholder.typicode.com/posts`,
+          true
+        );
+
+        xhttp.send();
+        xhttp.onreadystatechange = function () {
+          if (this.readyState === 4 && this.status === 200) {
+            var Userpost = [];
+            Userpost = JSON.parse(xhttp.responseText);
+          
+            Userpost.forEach(function (post) {
+              document.querySelector(".result").innerHTML += `
+                  
+              <div  class="row col-lg-4 col-md-6 col-sm-12">
+                  <div class="card p-2 mb-3 ">
+                   <div class="card-body">
+                     <h3 class="card-title" >${post.userId}</h3>
+                       <div class="card-text">ID: ${post.id}</div>
+                            <div class="card-text">Title : ${post.title}</div>
+                            <div class="card-text">Body : ${post.body}</div>
+                          </div>
+                          <div ><a class="btn btn-secondary  col-md-12 col-sm-12 mb-3 " onclick=" Showpostcomments (${
+                            post.id
+                          })">Comments</a>
+                          <a class="btn btn-secondary  col-md-12 col-sm-12" onclick="Hide(${
+                            post.id
+                          })" >Close</a>
+</div>
+                          <div class="showcomments  p-2" id=${
+                            "showcomments" + post.id
+                          }> </div>
+
+                          </div>
+                          </div>
+                          `;
+            });
+            hideLoading();
+          
+          }
+        };
+      };
+
+      showUserpost();
+      var Showpostcomments = function (id) {
+        showLoading();
+        const xhttp = new XMLHttpRequest();
+        xhttp.open(
+          "GET",
+          `https://jsonplaceholder.typicode.com/posts/${id}/comments`,
+          true
+        );
+
+        xhttp.send();
+        xhttp.onreadystatechange = function () {
+          if (this.readyState === 4 && this.status === 200) {
+            var PostComments = [];
+            PostComments = JSON.parse(xhttp.responseText);
+            document.getElementById("showcomments" + id).innerHTML = "";
+            PostComments.forEach(function (comment) {
+              document.getElementById("showcomments" + id).innerHTML += `
+                  
+                    UserId :${comment.postId}<br>
+                   name: ${comment.name}<br>
+                    email: ${comment.email}<br>
+                    Body: ${comment.body}<br><br>
+                   <hr>`;
+            });
+            hideLoading();
+            document.getElementById("showcomments" + id).style.display = "flex";
+            document.getElementById("showcomments" + id).style.flexWrap = "wrap";
+          }
+        };
+      };
+     
+    </script>
+     <script src="lib/jQuery/jquery-3.6.0.min.js"></script>
+     <script src="lib/popper/popper.min.js"></script>
+     <script src="lib/bootstrap/dist/js/bootstrap.min.js"></script>
+  </body>
+</html>
